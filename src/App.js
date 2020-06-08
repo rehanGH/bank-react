@@ -1,12 +1,6 @@
 import React, {Component} from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import Home from './components/Home';
-import UserProfile from './components/UserProfile';
-import LogIn from './components/LogIn';
-import Debits from "./components/Debits";
-import Credits from "./components/Credits";
-
-
+import {UserProfile, LogIn, Debits, Home, Credits} from "./components"
 import axios from "axios"
 
 class App extends Component {
@@ -14,7 +8,7 @@ class App extends Component {
     super();
 
     this.state = {
-      accountBalance: 0,
+      accountBalance: 14568.27,
       currentUser: {
         userName: 'bob_loblaw',
         memberSince: '08/23/99',
@@ -28,16 +22,16 @@ class App extends Component {
     axios
         .get(`https://moj-api.herokuapp.com/debits`)
         .then((response) => {
-            const data = response.data;
-            this.setState({debitsAcc: data})
+            const debitData = response.debitData;
+            this.setState({debitsAcc: debitData})
             })
             .catch((err) => console.log(err));
       
     axios
         .get("https://moj-api.herokuapp.com/credits")
         .then((response) => {
-          const data = response.data;
-          this.setState({creditsAcc: data,});
+          const creditData = response.creditData;
+          this.setState({creditsAcc: creditData,});
         })
         .catch((error) => {
           console.log(error);
@@ -50,18 +44,6 @@ class App extends Component {
     this.setState({currentUser: newUser})
   }
 
-  mockDebits = (debitsInfo) => {
-    const newDebit = {...this.state.debitsAcc}
-    newDebit.debitsAcc = debitsInfo.debitsAcc
-    this.setState({debitsAcc: newDebit})
-  }
-
-  mockCredits = (creditsInfo) => {
-    const newCredits = {...this.state.creditsAcc}
-    newCredits.creditsAcc = creditsInfo.creditsAcc
-    this.setState({creditsAcc: newCredits})
-  }
-
   render() {
 
     const HomeComponent = () => (<Home accountBalance={this.state.accountBalance}/>);
@@ -70,13 +52,17 @@ class App extends Component {
     );
     const LogInComponent = () => (<LogIn user={this.state.currentUser} mockLogIn={this.mockLogIn} {...this.props}/>)
     const DebitsComponent = () => (
-      <h1>Debits</h1>
-    );
+      <Debits 
+        accountBalance={this.state.accountBalance}
+        debitsAcc={this.state.debitsAcc}
+      />
+      );
     const CreditsComponent = () => (
-      <h1>Debits</h1>
-    );
-
-
+      <Credits 
+        accountBalance={this.state.accountBalance}
+        debitsAcc={this.state.debitsAcc}
+      />
+      );
 
     return (
         <Router>
